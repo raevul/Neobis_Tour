@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-import cloudinary
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -50,6 +49,7 @@ INSTALLED_APPS = [
 
     # my apps
     'tour.apps.TourConfig',
+    'reserve.apps.ReserveConfig',
 ]
 
 MIDDLEWARE = [

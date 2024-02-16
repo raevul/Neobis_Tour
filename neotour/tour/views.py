@@ -46,6 +46,9 @@ class TourDetailAPIView(views.APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
-        tour = Tour.objects.get(id=kwargs['tour_id'])
+        try:
+            tour = Tour.objects.get(id=kwargs['tour_id'])
+        except Exception as e:
+            return Response({'data': 'Error when deleting'}, status=status.HTTP_400_BAD_REQUEST)
         tour.delete()
-        return Response({'data': 'successfully deleted'}, status=status.HTTP_200_OK)
+        return Response({'data': 'Successfully deleted'}, status=status.HTTP_200_OK)

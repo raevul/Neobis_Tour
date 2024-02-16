@@ -15,10 +15,10 @@ class Category(models.Model):
 
 class Tour(models.Model):
     title = models.CharField(max_length=100, db_index=True)
-    description = models.TextField(max_length=1000, null=True)
+    description = models.TextField(max_length=1500, null=True)
     image = models.ImageField("Tour image", upload_to='Tour main image')
     location = models.CharField(max_length=100)
-    category = models.ForeignKey(Category, on_delete=models.DO_NOTHING)
+    category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, default=None)
     created_at = models.DateField(auto_now_add=True)
 
     class Meta:
@@ -32,7 +32,7 @@ class Tour(models.Model):
 
 class TourImages(models.Model):
     images = models.ImageField("Other images", upload_to='Tour other images', null=True)
-    tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='tour')
+    tour = models.ForeignKey(Tour, on_delete=models.CASCADE, related_name='images')
 
     class Meta:
         verbose_name = 'Tour image'
