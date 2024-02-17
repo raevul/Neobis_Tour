@@ -41,15 +41,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # my settings
+    # project settings apps
     'drf_yasg',
     'rest_framework',
     'cloudinary',
     'cloudinary_storage',
+    'rest_framework.authtoken',
+    'djoser',
 
     # my apps
     'tour.apps.TourConfig',
     'reserve.apps.ReserveConfig',
+    'account',
 ]
 
 MIDDLEWARE = [
@@ -134,6 +137,22 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
+DJOSER = {
+    'SERIALIZER': {
+        'user_create': 'account.serializers.CustomUserRegistrationSerializer',
+        'user': 'djoser.serializer.UserSerializer',
+        'current_user': 'djoser.serializer.UserSerializer',
+    },
+    'LOGIN_FIELD': 'username',
+    'HIDE_USERS': False,
+}
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUD_NAME'),

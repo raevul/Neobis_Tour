@@ -31,7 +31,7 @@ class TourDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tour
-        fields = ['id', 'title', 'image', 'description', 'category', 'location', 'images', 'uploaded_images']
+        fields = ['id', 'title', 'image', 'description', 'price', 'category', 'location', 'images', 'uploaded_images']
 
     def create(self, validated_data):
         uploaded_data = validated_data.pop('uploaded_images')
