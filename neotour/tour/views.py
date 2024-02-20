@@ -2,9 +2,24 @@ from rest_framework import views, status
 from rest_framework.response import Response
 
 from reserve.serializers import ReserveSerializer, Reserve
-from .serializers import CategorySerializer, TourSerializer, TourDetailSerializer
+from .serializers import CategorySerializer, TourSerializer, TourDetailSerializer, CategoryDetailSerializer
 from .models import Category, Tour
 from .permissions import IsAdminOrReadOnly
+
+
+class CategoryAPIView(views.APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            title_param = request.query_params.get('title', None)
+            if title_param is not None:
+                category = Category.objects.filter(title=title_param)
+            else:
+                category = Category.objects.all()
+        except Exception as e:
+            return Response({'data': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = CategoryDetailSerializer(category, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class TourAPIView(views.APIView):
@@ -38,7 +53,7 @@ class TourDetailAPIView(views.APIView):
     def get(self, request, *args, **kwargs):
         try:
             tour = Tour.objects.get(id=kwargs['tour_id'])
-        except Exception as e:
+        except Tour.DoesNotExist:
             return Response({"data": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
         serializer = TourDetailSerializer(tour)
         return Response(serializer.data, status=status.HTTP_200_OK)

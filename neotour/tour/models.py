@@ -19,7 +19,7 @@ class Tour(models.Model):
     image = models.ImageField("Tour image", upload_to='Tour main image')
     price = models.DecimalField(max_digits=10, decimal_places=2)
     location = models.CharField(max_length=100)
-    category = models.ForeignKey(Category, on_delete=models.DO_NOTHING)
+    category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, related_name='category')
     created_at = models.DateField(auto_now_add=True)
 
     class Meta:
