@@ -23,7 +23,6 @@ class TourSerializer(serializers.ModelSerializer):
 
 
 class TourDetailSerializer(serializers.ModelSerializer):
-    category = CategorySerializer()
     images = TourImageSerializer(many=True, read_only=True)
     uploaded_images = serializers.ListField(
         child=serializers.ImageField(max_length=100000, allow_empty_file=False, use_url=False),
@@ -43,8 +42,8 @@ class TourDetailSerializer(serializers.ModelSerializer):
 
 
 class CategoryDetailSerializer(serializers.ModelSerializer):
-    category = TourDetailSerializer(many=True)
+    tours = TourSerializer(many=True)
 
     class Meta:
         model = Category
-        fields = ['id', 'title', 'category']
+        fields = ['id', 'title', 'tours']

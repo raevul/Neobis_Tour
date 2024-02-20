@@ -7,7 +7,6 @@ from reserve.models import Reserve
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     username = models.CharField(max_length=50)
-    phone = models.IntegerField(default=0)
     email = models.EmailField(unique=True)
     reserve = models.OneToOneField(Reserve, on_delete=models.CASCADE, related_name='reserve')
 

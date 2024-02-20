@@ -1,17 +1,18 @@
-from djoser.views import UserViewSet as DjoserUserViewSet
+from rest_framework import views, status
+from rest_framework.response import Response
 from djoser.permissions import CurrentUserOrAdminOrReadOnly
 
-from .serializers import CustomUserRegistrationSerializer
+from .serializers import UserProfileSerializer
+from .models import UserProfile
 
 
-class CustomUserViewSet(DjoserUserViewSet):
-    serializer_class = CustomUserRegistrationSerializer
+class UserProfileAPIView(views.APIView):
     permission_classes = [CurrentUserOrAdminOrReadOnly]
 
-    def get_serializer_class(self):
-        if self.action == 'me':
-            return CustomUserRegistrationSerializer
-        return super().get_serializer_class()
-
-    def get_queryset(self):
-        return self.request.user
+    def get(self, request, *args, **kwargs):
+        try:
+            user = UserProfile.objects.get(user=request.user)
+        except UserProfile.DoesNotExist:
+            return Response({"data": "Profile does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = UserProfileSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
