@@ -22,6 +22,42 @@ class CategoryAPIView(views.APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class CategoryDetailAPIView(views.APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            category = Category.objects.get(title__iexact=kwargs['title'])
+        except Category.DoesNotExist:
+            return Response({'data': 'Category does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = CategorySerializer(category)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        serializer = CategorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({'data': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, *args, **kwargs):
+        try:
+            category = Category.objects.get(title__iexact=kwargs['title'])
+        except Category.DoesNotExist:
+            return Response({'data': 'Category does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = CategorySerializer(instance=category, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'data': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            category = Category.objects.get(title__iexact=kwargs['title'])
+        except Exception as e:
+            return Response({'data': 'Error when deleting'}, status=status.HTTP_400_BAD_REQUEST)
+        category.delete()
+        return Response({'data': 'Successfully deleted'}, status=status.HTTP_200_OK)
+
+
 class TourAPIView(views.APIView):
     permission_classes = [IsAdminOrReadOnly]
 
@@ -70,7 +106,10 @@ class TourDetailAPIView(views.APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, *args, **kwargs):
-        tour = Tour.objects.get(id=kwargs['tour_id'])
+        try:
+            tour = Tour.objects.get(id=kwargs['tour_id'])
+        except Tour.DoesNotExist:
+            return Response({'data': 'Tour does not exist'}, status=status.HTTP_404_NOT_FOUND)
         serializer = TourDetailSerializer(instance=tour, data=request.data)
         if serializer.is_valid():
             serializer.save()
