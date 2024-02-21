@@ -12,7 +12,7 @@ class CategoryAPIView(views.APIView):
         try:
             title_param = request.query_params.get('title', None)
             if title_param is not None:
-                category = Category.objects.filter(title=title_param)
+                category = Category.objects.filter(title__iexact=title_param)
             else:
                 category = Category.objects.all()
         except Exception as e:
