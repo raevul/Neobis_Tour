@@ -38,7 +38,7 @@ class TourDetailSerializer(serializers.ModelSerializer):
         child=serializers.ImageField(max_length=100000, allow_empty_file=False, use_url=False),
         write_only=True
     )
-    reviews = ReviewSerializer(many=True, read_only=True)
+    reviews = ReviewSerializer(many=True)
 
     class Meta:
         model = Tour
