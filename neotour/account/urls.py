@@ -1,7 +1,7 @@
 from django.urls import path, include
 from djoser.views import UserViewSet
 
-from .views import UserProfileAPIView, RegisterAPIView
+from .views import UserProfileAPIView
 
 
 urlpatterns = [

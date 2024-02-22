@@ -1,4 +1,4 @@
-from rest_framework import views, status
+from rest_framework import views, status, permissions
 from rest_framework.response import Response
 
 from reserve.serializers import ReserveSerializer, Reserve
@@ -24,6 +24,8 @@ class CategoryAPIView(views.APIView):
 
 
 class CategoryDetailAPIView(views.APIView):
+    permission_classes = [permissions.IsAdminUser]
+
     def get(self, request, *args, **kwargs):
         try:
             category = Category.objects.get(title__iexact=kwargs['title'])
@@ -60,14 +62,14 @@ class CategoryDetailAPIView(views.APIView):
 
 
 class TourAPIView(views.APIView):
-    permission_classes = [IsAdminOrReadOnly]
-    # ToDo сделать фильтрацию по сезону
+    permission_classes = [permissions.IsAdminUser]
+
     def get(self, request):
         try:
             categories = Category.objects.all()
             tours = Tour.objects.all()
         except Exception as a:
-            return Response({'data': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'data': 'Category or tour does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
         category_serializer = CategorySerializer(categories, many=True)
         tour_serializer = TourSerializer(tours, many=True)
@@ -129,6 +131,8 @@ class TourDetailAPIView(views.APIView):
 
 
 class TourReservationAPIView(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def get(self, reqeust, *args, **kwargs):
         try:
             tour = Tour.objects.get(id=kwargs['tour_id'])

@@ -1,16 +1,14 @@
 FROM python:3.10
-LABEL authors="ular"
 
-RUN git clone git@github.com:raevul/Neobis_Tour.git/Neobis_Tour/neotour
+COPY . /neotour
 
-WORKDIR /Neobis_Tour/neotour
+WORKDIR /neotour
 
-RUN ls .
+RUN python3 -m venv .venv
+SHELL ["/bin/bash", "-c"]
+RUN source .venv/bin/activate
 
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-VOLUME /Neobis_Tour/neotour
-
-EXPOSE 8000
-
-ENTRYPOINT ["top", "-b"]
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
