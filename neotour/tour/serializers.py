@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Category, Tour, TourImages
+from .models import Category, Tour, TourImages, Review
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -22,16 +22,28 @@ class TourSerializer(serializers.ModelSerializer):
         fields = ['title', 'image']
 
 
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['id', 'user', 'text']
+
+
+class ReviewSerializerHard(serializers.Serializer):
+    text = serializers.CharField(max_length=500, required=True, min_length=1)
+
+
 class TourDetailSerializer(serializers.ModelSerializer):
     images = TourImageSerializer(many=True, read_only=True)
     uploaded_images = serializers.ListField(
         child=serializers.ImageField(max_length=100000, allow_empty_file=False, use_url=False),
         write_only=True
     )
+    reviews = ReviewSerializer(many=True)
 
     class Meta:
         model = Tour
-        fields = ['id', 'title', 'image', 'description', 'price', 'category', 'location', 'images', 'uploaded_images']
+        fields = ['id', 'title', 'image', 'description', 'price', 'category',
+                  'location', 'images', 'uploaded_images', 'reviews']
 
     def create(self, validated_data):
         uploaded_data = validated_data.pop('uploaded_images')

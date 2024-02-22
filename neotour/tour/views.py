@@ -2,8 +2,9 @@ from rest_framework import views, status
 from rest_framework.response import Response
 
 from reserve.serializers import ReserveSerializer, Reserve
-from .serializers import CategorySerializer, TourSerializer, TourDetailSerializer, CategoryDetailSerializer
-from .models import Category, Tour
+from .serializers import (CategorySerializer, TourSerializer, TourDetailSerializer,
+                          CategoryDetailSerializer, ReviewSerializer, ReviewSerializerHard)
+from .models import Category, Tour, Review
 from .permissions import IsAdminOrReadOnly
 
 
@@ -60,7 +61,7 @@ class CategoryDetailAPIView(views.APIView):
 
 class TourAPIView(views.APIView):
     permission_classes = [IsAdminOrReadOnly]
-
+    # ToDo сделать фильтрацию по сезону
     def get(self, request):
         try:
             categories = Category.objects.all()
@@ -90,20 +91,22 @@ class TourDetailAPIView(views.APIView):
         try:
             tour = Tour.objects.get(id=kwargs['tour_id'])
         except Tour.DoesNotExist:
-            return Response({"data": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"data": "Tour does not exist"}, status=status.HTTP_404_NOT_FOUND)
         serializer = TourDetailSerializer(tour)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
-        tour = Tour.objects.get(id=kwargs['tour_id'])
-        serializer = ReserveSerializer(data=request.data)
+        try:
+            tour = Tour.objects.get(id=kwargs['tour_id'])
+        except Tour.DoesNotExist:
+            return Response({"data": "Tour does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        user = request.user
+        serializer = ReviewSerializerHard(data=request.data)
         if serializer.is_valid():
-            phone = serializer.data.get('phone')
-            content = serializer.data.get('content')
-            Reserve.objects.create(phone=phone, content=content)
+            text = serializer.data.get('text')
+            Review.objects.create(text=text, user=user, tour=tour)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"data": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, *args, **kwargs):
         try:
@@ -123,3 +126,27 @@ class TourDetailAPIView(views.APIView):
             return Response({'data': 'Error when deleting'}, status=status.HTTP_400_BAD_REQUEST)
         tour.delete()
         return Response({'data': 'Successfully deleted'}, status=status.HTTP_200_OK)
+
+
+class TourReservationAPIView(views.APIView):
+    def get(self, reqeust, *args, **kwargs):
+        try:
+            tour = Tour.objects.get(id=kwargs['tour_id'])
+        except Tour.DoesNotExist:
+            return Response({"data": 'Tour does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = TourDetailSerializer(tour)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            tour = Tour.objects.get(id=kwargs['tour_id'])
+        except Tour.DoesNotExist:
+            return Response({'data': 'Tour does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ReserveSerializer(data=request.data)
+        if serializer.is_valid():
+            phone = serializer.data.get('phone')
+            content = serializer.data.get('content')
+            Reserve.objects.create(phone=phone, content=content, tour=tour)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

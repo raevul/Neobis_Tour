@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Tour, TourImages
+from .models import Category, Tour, TourImages, Review
 
 
 class TourImageInLine(admin.TabularInline):
@@ -15,3 +15,4 @@ class AdminTour(admin.ModelAdmin):
 admin.site.register(Category)
 admin.site.register(Tour)
 admin.site.register(TourImages)
+admin.site.register(Review)
