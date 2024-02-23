@@ -24,7 +24,7 @@ class CategoryAPIView(views.APIView):
 
 
 class CategoryDetailAPIView(views.APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdminOrReadOnly]
 
     def get(self, request, *args, **kwargs):
         try:
@@ -62,7 +62,7 @@ class CategoryDetailAPIView(views.APIView):
 
 
 class TourAPIView(views.APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdminOrReadOnly]
 
     def get(self, request):
         try:
