@@ -1,14 +1,17 @@
 FROM python:3.10
 
-COPY . /neotour
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV APP_HOME /neotour
 
-WORKDIR /neotour
+WORKDIR /$APP_HOME
 
-RUN python3 -m venv .venv
-SHELL ["/bin/bash", "-c"]
-RUN source .venv/bin/activate
+COPY ./requirements.txt .
 
-RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+COPY . .
+
+EXPOSE 8000
+
+CMD ["python3", "/neotour/manage.py", "runserver", "0.0.0.0:8000"]
