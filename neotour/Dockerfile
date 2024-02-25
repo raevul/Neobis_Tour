@@ -2,9 +2,9 @@ FROM python:3.10
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV APP_HOME /neotour
+ENV APP_HOME <pwd>/neotour
 
-WORKDIR /$APP_HOME
+WORKDIR $APP_HOME
 
 COPY ./requirements.txt .
 
@@ -14,4 +14,4 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["python3", "/neotour/manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
