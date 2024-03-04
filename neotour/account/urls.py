@@ -1,11 +1,10 @@
 from django.urls import path, include
-from djoser.views import UserViewSet
 
-from .views import UserProfileAPIView
+from .views import UserProfileAPIView, RegisterAPIView
 
 
 urlpatterns = [
-    path('auth/register/', UserViewSet.as_view({'post': 'create'})),
+    path('auth/register/', RegisterAPIView.as_view()),
     path('auth/me/', UserProfileAPIView.as_view()),
     path('auth/', include('djoser.urls.authtoken')),
 ]
